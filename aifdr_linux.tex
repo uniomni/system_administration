@@ -1,0 +1,44 @@
+\documentclass[a4paper]{book}
+
+\usepackage{graphicx}
+%\usepackage{hyperref}
+\usepackage{amsfonts}
+\usepackage{url}      % for URLs and DOIs
+\newcommand{\doi}[1]{\url{http://dx.doi.org/#1}}
+
+
+%----------title-------------%
+\title{Linux system administration at Australia-Indonesia Facility for Disaster Reduction (AIFDR)}
+%\titlerunning{AIFDR Linux system administratio}
+
+%-------authors-----------
+\author{O. Nielsen}
+%\authorrunning{O. Nielsen}
+
+
+% to be added when submitted to ocean dynamics
+%\institute{AIFDR}
+
+
+%================Start of Document================
+\begin{document}
+
+\maketitle
+
+
+\begin{quotation}
+This document documents system administration procedures for the Linux systems at the Australia-Indonesia Facility for Disaster Reduction, Jakarta.
+\end{quotation}
+
+\tableofcontents
+
+\include{introduction}
+\include{beowulf}
+\include{web}
+\include{subversion}
+\include{trac}
+\clearpage
+
+%\bibliographystyle{plain}
+%\bibliography{sysadm}
+\end{document}

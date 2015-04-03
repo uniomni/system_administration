@@ -1,0 +1,559 @@
+﻿Installation of the HPC cluster at AIFDR Oct 2009
+
+
+This document summarises findings from the installation and confiduration process at AIFDR which took place from 30th September to 17th October 2009.
+
+Cluster and Network architecture is outlined in .....
+
+
+Test results
+
+OS and connectivity
+Ubuntu OS installed without problems on head node
+Compute nodes configured to PXE boot from head node
+User data shared among all nodes
+System updates synchronised across all nodes
+User accounts synchronised across all nodes
+
+Performance testing
+Expected bandwidth and latency verified at the application level (117 MB/s. 50 ms using MPI)
+ANUGA Okushiri benchmark completed in 297s on the head node. In comparison, the GFI server tested at GA in February 2009 took 463s and the GA cluster, tornado, takes 1241s for this benchmark to complete. This indicates that each node is about 50% faster than the GFI test server and over 4 times as fast as the GA cluster.
+ANUGA Okushiri benchmark completed simultaneously on ten nodes in 300s-320s which indicates that performance is sustained except for an expected slight degradation due to output being stored through the network rather than on a local disk
+
+
+
+Outstanding Issues
+
+External login from AIFDR office and from internet using ssh
+Cluster connects to the NAS mass storage
+Nodes are only equipped with 24GB memory as opposed to the expected 32GB 
+Interaction with server is very slow when it is copying or computing. This may be due to keyboard being prioritised down by the hardware. Need to test how the interaction works when logging in remotely.
+Noticed thath compute node 5 is comparatively slow to boot. It seems toi get stuck  at the following line: usb hub found, 7 ports detected. This is before OS is loaded and may indicate a problem with the hardware or the BIOS. It normally comes around after 10-15 minutes.
+
+30th September 2009
+
+Discussed network design for the entire office and how HPC and storage will fit in. Concept is to allow login to HPC from office network but not the other way around. External access to HPC allowed. Storage on separate segment and can be seen by all.
+Visited AIFDR office site.
+Installed basic Ubuntu system.
+Supriono then worked towards PXE booting
+
+Lunch provided by GFI
+Dinner provided by Trev
+
+1 October 
+Basic PXE done.
+Issue with hostnames. Discovered that multiple client configuration files (one set for each client) server must exist.
+Briefed AusAID on progress
+
+Wrote automation script for creating PXE configuration. 
+One hiccup remained as clients don't prompt for passwords.
+Supriono to investigate.
+
+Lunch provided by GFI
+
+2 October
+
+Supriono fixed the problem by having a fresh ubuntu copy copied to the head node.
+Most is now automated but a few config files rely on what is in ubuntu-running. 
+Monday needs to script that.
+Briefed AusAID
+
+Installed subversion, ANUGA + dependencies
+Timed Okushiri benchmar: 297s on head node and 311s on one compute node. The latter ran at 95% indicating a small penalty in writing to filesystem on head node.
+
+Started Patong benchmark.
+
+Reinstated hostname being automatically assigned in the hostname file. It had dropped of.
+
+Issues: slow internet, diffculty to get enough time in the office, slow graphics card makes interaction slow
+  
+Can't ssh to blades – there is no ssh in inet.d (running-ubuntu)
+Automate network/interfaces as well
+
+I shouted lunch
+
+3 October (Saturday)
+
+Understood issue with SSH: The reason is that the ssh daemon is not part of the base Ubuntu installation and must therefore installed prior to distribution to the compute nodes. Verified this on NAS2.
+
+Due to a power out the Patong simulation had not completed. However, it had reached 9600 model seconds out of 15000 (64%) and the estimated time (from anuga.log) was 7h22m or 442 min. A rough estimate would therefore put the total runtime to 600 min or 36000 seconds. This is much better than the test machine from Feb.
+
+Restarted Patong.
+
+Dinner provided by Melba Pria.
+4 October (Sunday)
+Lunch provide by Nirwan
+
+5 October.
+
+Patong completed, but timing was reported at 137801s which is much more than expected. This is most likely because the model tested on is more complex than the one used in Feb. I have asked Ross Wilson to give me timings of the recent model.
+
+Lots of fiddling with internet cables and connection to web.
+Separated network cards for PXE and network communication.
+Automatically mount home dir to all compute nodes.
+
+Fresh Ubuntu baseline installation done and deployed: Needs nft-kernel-server and openssh-server.
+
+Automatically pushed system out to nodes 1 to 10 and verified ssh access and shared (rw) home directory.
+
+Next steps:
+
+1.Create NAS system with redundant appearance. (Supriono)
+2.Move shared home to NAS (Ole and Supriono)
+3.Replace ip address with symbolic hostnames using DNS: Supriono and Ole – Done 6/10
+4.Establish synchronisation of filesystems when new software is installed: Ole – Done 6/10
+5.Perhaps share password files (password, shadow, group, gshadow) across cluster and NAS: Ole – partly done 6/10
+6.Standardise what NIC1 to NIC4 are used for. (E.g. NIC1 is for PXE, NIC2 is for net, NIC3 (and 4) for storage: Nirwan, Supriono, Widjaja)
+7.Trunking (at the ethernet switch): Widjaja (when moves to site)
+8.Install OpenMPI and test (Ole)
+9.Install pypar and test (Ole)
+10.ANUGA timings (Ole): Partly done 6/10
+11.Fall3D installation (Ole): Installed 6/10
+12.EORM installation (Ole)
+13.Backup (GFI)
+14.Web server (GFI)
+15.Windows office machines (GFI)
+16.Mail server (GFI)
+17.Ole's Linux Desktop (Ole)
+18.Office file server (GFI)
+19.Firewall (GFI)
+20.External login to alamba (GFI, Ole)
+21.Documentation (Supriono, Ole, Widjaja, Nirwan)
+22.Cleanup installation scripts (Ole): Done
+
+Fresh installation steps done to provide ubuntu basesystem:
+* Install Ubuntu 9.04 desktop from CD on a server somewhere
+* Add user named 'install'
+* apt-get install openssh-server
+* apt-get install nfs-kernel-server
+* Edit exports on server with the line
+   192.168.11.1/255.255.255.0(rw,no_root_squash,async,no_subtree_check)
+* exportfs -rv (or exportfs -a)
+* Move to cluster head node and do the following
+* mount -tnf- -onolock server_if:/ /mnt
+* cp -axv /mnt/. /ubuntu_basesystem/.
+
+
+
+6 October
+
+Verified reboot and login of node 3
+Installed viewer on Windows machine and tested sww files okushiri and patong produced on alamba earlier.
+
+Synchronised /usr and /etc to nodes  and verified ANUGA runs.
+Verified that user accounts (/etc/password) were replicated
+ This means that dependencies were succesfully synchronised. 
+
+Verified reboot of head node as well as compute nodes (a few fixes were needed)
+Redid Okushiri timing on 10 nodes simultaneously; run times were consistently around 305s-321s
+
+
+7 October
+
+Morning meeting at AusAID in regard to INDEX – Indonesian Exposure data
+
+Cleaned up installation scripts.
+Deleted everything, rebooted, reinstalled on 10 nodes and verified ssh access and ANUGA run on 10 noes.
+Glass of wine with Peter
+
+
+8 October
+
+Internet issues – routing wasn't captured?
+
+Moved patong data off AMD server
+Moved config and ubuntu_system off server.
+
+Added 6 more disks to head node. Now it has 7 RAID 5 + 1 hot spare yielding 6 * 70GB=420GB
+
+Reinstalled Ubuntu: 16:50-17:05
+Unpacked ubuntu base system and /share/home
+linked /home to /share/home
+
+python configure_server.py
+missing dhcp3-server, nfs-kernel-server, tftpd-hpa, bind9
+
+added nameserver 202.134.0.155 to resolv.conf
+apt-get update
+apt-get install 
+
+Discovered missing kernel and ram disk image and fixed it.
+
+Started installing Ubuntu again 19:30 – 19:42 – 19:45
+
+cp shared 
+link home
+
+cp ubuntu basesystem
+
+cp clustermanagement3 and un pack
+
+
+initialise_server.py
+
+Had lost last files – did it again
+cluster_management5.tgz 
+
+Started ned Ubuntu install at 21:12 – 21:26 -21:31
+
+Unpacked ubuntu system and shared.
+Moved shared to compute-node
+
+21:45
+Initialise_server.py (needed to restart network a few times. Why?)
+
+22:00 
+build_cluster.py (node3)
+22:04 OK – except dhcp and networking had to be restarted a couple of times.
+22:05 booting node3
+22:09 All good with node 3
+
+
+9 October
+
+Cleaned up installation scripts and wrote documentation.
+
+Lunch by GFI
+
+Utilised extra network connections as bonded interfaces allowing greater availability and bandwidth between nodes.
+
+
+10 October
+
+Supriono had installed RH and Heartbeat failover on NAS servers.
+Installed ANUGA and dependencies again and ran tests.
+Okushiri timing was, again, 297s – 306s on head node and 300s/302s/303s one one compute node. 
+The latter is a little faster than the timing done on 2 October indicating the the network bonding is working. 
+However, this is not significant.
+
+Installed Fal3d again and ran example. Verified that log files for Script-SetGrn-Unix
+,  Script-SetDbs-Unix
+, 
+
+Script-SetSrc-Unix
+ and Script-Fall3d-Ser
+ reported normal completion.
+Verified the 2h, 4h, 6h ash isopach plots are as ecpected.
+
+Copied old patong timing data and ANUGA as of feb across from AMD server
+
+Bandwidth testing using OpenMPI (network_timing.c): 
+mpirun -np 2 --host node1,node2 a.out
+
+117 Mb/s, 46us latency ???????????????
+35.726 Mb/s
+ Estimated latency:           888 micro s
+
+
+mpirun -np 2 --host node1,node2 a.out
+Estimated bandwith (1/t_b):  117.495 Mb/s
+
+Estimated latency:           47 micro s
+
+
+however
+nielso@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node1,node3 a.out 
+
+Estimated bandwith (1/t_b):  21.634 Mb/s
+
+Estimated latency:           40 micro s
+
+
+and
+nielso@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node3,node4 a.out 
+Estimated bandwith (1/t_b):  8.995 Mb/s
+
+Estimated latency:           69 micro s
+
+
+nielso@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node1,node4 a.out 
+
+Estimated bandwith (1/t_b):  117.480 Mb/s
+
+Estimated latency:           47 micro s
+
+
+nielso@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node1,node5 a.out 
+
+Estimated bandwith (1/t_b):  117.482 Mb/s
+
+Estimated latency:           47 micro s
+
+
+
+Estimated bandwith (1/t_b):  8.996 Mb/s
+
+Estimated latency:           44 micro s
+
+nielso@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node1,node6 a.out 
+
+
+Estimated bandwith (1/t_b):  36.606 Mb/s
+
+Estimated latency:           46 micro s
+
+nielso@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node5,node6 a.out 
+
+
+Estimated bandwith (1/t_b):  29.897 Mb/s
+
+Estimated latency:           49 micro s
+
+nielso@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node4,node6 a.out 
+
+
+mpirun -np 2 --host node2,node1 a.out 
+
+Bytes transferred   time (micro seconds)
+
+                    min        avg        max 
+
+----------------------------------------------
+
+         8            47         50         64
+
+    400008          3556       3585       3831
+
+    800008          6958       6962       6984
+
+   1200008         10350      10361      10387
+
+   1600008         13741      13754      13772
+
+   2000008         17142      17155      17193
+
+   2400008         20550      20556      20578
+
+   2800008         23954      23956      23965
+
+   3200008         27346      27349      27359
+
+   3600008         30736      30746      30753
+
+
+
+Linear regression on best timings (t = t_l + t_b * bytes):
+
+  t_b = 0.008511
+
+  t_l = 119.217065
+
+  Estimated relative variance = 0.000000000
+
+
+
+Estimated bandwith (1/t_b):  117.500 Mb/s
+
+Estimated latency:           47 micro s
+
+nielso@alamba:~/sandpit/pypar/source$ 
+
+
+Estimated bandwith (1/t_b):  117.391 Mb/s
+
+Estimated latency:           56 micro s
+
+nielso@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host alamba,node1 a.out 
+
+
+
+Broke system trying to get python2.5 to be the default in order to run february timimngs again.
+
+Start fresh install at 16:30
+Started downloading essential packages at 17:05
+
+Clients did not come up. Complaining about filesystem does not have sbin/init and something to do with permissins on nfs-preboot, 
+Retrying nfsmount ...
+mount call failed – server replied: Permission denied
+
+Tried the earlier version from thursday night with same problem. Rebooted server and it worked.
+Tried latest version with bonding again. This time it worked.
+
+Tried again with bond-version and got same error.
+Rebooted everything – still same erroro
+
+Brought back to last prebond version 20091000 and tried again. Still problems
+
+Manually took bond0 down and rebooted
+
+It seems to work without network bonding: cluster_management_20091010_nobond
+Try to do the same with a fesh install
+
+Left 20:30
+
+
+11 October 2009 (Sunday)
+Updated design document
+Updated INDEX proposal
+Discovered PostGIS
+
+Went to GFI
+Changed net addresses tom comply with document. Nodes failed booting. There must be a hardware switch.
+The failure had to do with initramfs and was similar to what happened yesterday with the bonded version.
+
+Changed back and double hecked that nodes can boot.
+Reinstalled Ubuntu 15:15
+Installed non-bonded version, ubuntu_base, basic packages and rebooted 15:50
+Ran build scripts for 8 nodes and verified all good (except n5 stuck again in boot (usb hub found, 7 ports detected)
+16:20. - came good at 16:35. Watch this, though.
+Installed emacs (takes a while at this network speed)
+Installed subversion,  got pypar, installed opempi and compiled pypar: ready to redo network timings 
+
+Network timings (no bond)
+Estimated bandwith (1/t_b):  117.501 Mb/s
+
+Estimated latency:           47 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node1,node2 network_timing
+
+
+Estimated bandwith (1/t_b):  117.449 Mb/s
+
+Estimated latency:           55 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host alamba,node2 network_timing
+
+
+Estimated bandwith (1/t_b):  117.450 Mb/s
+
+Estimated latency:           51 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host alamba,node3 network_timing
+
+
+Estimated bandwith (1/t_b):  117.445 Mb/s
+
+Estimated latency:           51 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host alamba,node4 network_timing
+
+
+Estimated bandwith (1/t_b):  117.443 Mb/s
+
+Estimated latency:           50 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host alamba,node5 network_timing
+
+
+Estimated bandwith (1/t_b):  117.405 Mb/s
+
+Estimated latency:           56 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host alamba,node6 network_timing
+
+
+Estimated bandwith (1/t_b):  117.429 Mb/s
+
+Estimated latency:           53 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host alamba,node7 network_timing
+
+
+Estimated bandwith (1/t_b):  117.397 Mb/s
+
+Estimated latency:           52 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host alamba,node8 network_timing
+
+
+Estimated bandwith (1/t_b):  117.498 Mb/s
+
+Estimated latency:           47 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node1,node8 network_timing
+
+
+Estimated bandwith (1/t_b):  117.485 Mb/s
+
+Estimated latency:           46 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node2,node7 network_timing
+
+
+Estimated bandwith (1/t_b):  117.475 Mb/s
+
+Estimated latency:           41 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node5,node7 network_timing
+
+
+Try all compute nodes in a ring:
+Estimated bandwith (1/t_b):  117.467 Mb/s
+
+Estimated latency:           44 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 8 --host node1,node2,node3,node4,node5,node6,node7,node8 network_timing
+
+
+Intranode (node 4):
+Estimated bandwith (1/t_b):  31.610 Mb/s
+
+Estimated latency:           1127 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host node4 network_timing
+
+
+Estimated bandwith (1/t_b):  29.265 Mb/s
+
+Estimated latency:           1538 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 4 --host node1 network_timing
+
+WHY?
+
+Intranode (alamba)
+Estimated bandwith (1/t_b):  4962.116 Mb/s
+
+Estimated latency:           1 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2  network_timing
+
+
+Estimated bandwith (1/t_b):  4143.701 Mb/s
+
+Estimated latency:           1 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --host alamba network_timing
+
+
+
+MIX
+Estimated bandwith (1/t_b):  117.415 Mb/s
+
+Estimated latency:           53 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 4 --host node5,node7 network_timing
+
+OK
+
+BYNODE or BYSLOT
+Estimated bandwith (1/t_b):  117.486 Mb/s
+
+Estimated latency:           46 micro s
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --bynode --host node2,node3 --hostfile ~/.hostfile network_timing
+
+
+Estimated bandwith (1/t_b):  30.603 Mb/s
+
+Estimated latency:           1418 micro s
+
+[1]+  Done                    emacs ~/.hostfile
+
+install@alamba:~/sandpit/pypar/source$ mpirun -np 2 --byslot --host node2,node3 --hostfile ~/.hostfile network_timing
+
+
+
+Bonded alamba (running bond.sh script and verifying ifconfig output)
+Configured node 2 and 3 using bond as well and rebooted them. 
+Didn't work – bugger.
+Had enough – reconfigured everything without bond and rebooted nodes.
+Verified all OK, (except 5 slow)
+Network timing OK
+
+17:35 Rebooted head node
+17:40 Rebooted client 1 to 8
+17:43 Connections  OK (n5 slow)
+17:44 Network timimngs OK
+
+Done

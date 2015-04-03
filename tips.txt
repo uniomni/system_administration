@@ -1,0 +1,12 @@
+# Recover mysql root password:
+http://www.cyberciti.biz/tips/recover-mysql-root-password.html
+
+# The find command
+http://content.hccfl.edu/pollock/unix/findcmd.htm
+
+# Reboot
+/etc/init.d/reboot stop (worked on alamba 6 July 2010 when nothing else did)
+reboot -d -f -i (used by the above)
+telinit 6 (alternative, but it didn't work)
+
+

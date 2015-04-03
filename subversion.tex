@@ -1,0 +1,96 @@
+\chapter{Revision Control}
+
+Revision control is essential to 
+\begin{itemize} 
+  \item Keep an audit trail of changes to information, i.e. what changes were made, who made them, when were they made and why they were made.
+  \item Be able to roll-back unwanted changesets
+  \item Allow simultaneous editing of information at different location
+\end{itemize}
+
+The revision control system used at AIFDR is Subversion \cite{} which is one of the most common systems in use.
+
+Links to Subversion tutorials used:
+\begin{itemize} 
+  \item \url{http://www.howtogeek.com/howto/ubuntu/install-subversion-with-web-access-on-ubuntu}
+  \item \url{http://odyniec.net/articles/ubuntu-subversion-server/}
+  \item \url{}
+\end{itemize} 
+
+\section{Setting up the Subversion server}  
+
+\section{Creating a new repository}
+
+AIFDR holds all the Subversion repositories on the Web Server
+under \texttt{/home/svn}.
+The following steps are needed to create a new repository.
+For the purpose of this example the repository is named abcd.
+
+\begin{itemize} 
+  \item \texttt{svnadmin create /home/svn/abcd}
+  \item Add the following to the file 
+    \texttt{/etc/apache2/mods-enabled/dav\_svn.conf}
+\begin{verbatim} 
+<Location /svn/abcd>
+  DAV svn
+  SVNPath /home/svn/abcd
+  AuthType Basic
+  AuthName "Subversion Repository"
+  AuthUserFile /etc/apache2/dav_svn.passwd
+
+  AuthzSVNAccessFile /etc/apache2/dav_svn.authz
+  Require valid-user
+</Location>
+\end{verbatim} 
+  \item Add the following to the file \texttt{/etc/apache2/dav\_svn.authz}
+  \begin{verbatim}
+[abcd:/]
+@aifdr = rw
+@guests = r
+  \end{verbatim} 
+  \item Set the ownership (and group) to www-data:
+  \begin{verbatim}
+    chown -R www-data:www-data /home/svn/abcd
+  \end{verbatim}  
+  \item Set permissions
+  \begin{verbatim}
+    chmod 770 /home/svn/abcd
+  \end{verbatim}    
+  \item Restart the web server using the command \texttt{/etc/init.d/apache2 restart}
+  
+\end{itemize} 
+
+\section{Creating a new Subversion user}
+
+A new Subversion user with new password can be created using:
+\begin{verbatim} 
+htpasswd -cm /etc/apache2/dav\_svn.passwd <username>
+\end{verbatim} 
+Note that you should only use the -c option the FIRST time that you create a user. After that you will only want to use the -m option to add users and 
+passwords to the list.
+
+Alternatively, an encrypted password can be created on 
+a Ubuntu (or any other Debian derived) Linux machine using the command
+\begin{verbatim}
+  mkpasswd
+\end{verbatim}
+The desired username and the generated encrypted password can then be added
+to the file \texttt{/etc/apache2/dav\_svn.passwd} as
+\begin{verbatim} 
+<user>:<encrypted password>
+\end{verbatim} 
+
+Update \texttt{/etc/apache2/dav\_svn.authz} by adding new user to
+the group \texttt{aifdr}. 
+
+\section{Using Subversion}
+  
+Interaction with the Subversion repositories can take place either 
+through the command line client svn or through graphical 
+user interfaces such as Tortoise (see Section \ref{sec:tortoise}). 
+The repository can also be
+read through TRAC (see Section \ref{TRAC}) or 
+directly by a web browser using URLs of the form
+\begin{verbatim} 
+http://www.aifdr.org/svn/<repository name>
+\end{verbatim}   
+

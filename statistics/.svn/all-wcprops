@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/system_administration/!svn/ver/271/statistics
+END
+list_manually_installed_packages.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/system_administration/!svn/ver/271/statistics/list_manually_installed_packages.py
+END
+list_shakemap_entries.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/system_administration/!svn/ver/200/statistics/list_shakemap_entries.py
+END
+internet_downtime.py
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/system_administration/!svn/ver/180/statistics/internet_downtime.py
+END
+config.py
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/system_administration/!svn/ver/179/statistics/config.py
+END
+diskstat.py
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/system_administration/!svn/ver/39/statistics/diskstat.py
+END
+macscan.sh
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/system_administration/!svn/ver/165/statistics/macscan.sh
+END

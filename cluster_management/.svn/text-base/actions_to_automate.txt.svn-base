@@ -1,0 +1,205 @@
+
+Things that were done after installation
+
+
+Installation of NX: http://www.aifdr.org/projects/system_administration/ticket/14
+Edit /etc/ssh/sshd_config to add
+# Prevent automatic logout
+# From http://www.rogerobeid.com/2011/02/10/ssh-write-failed-broken-pipe/
+ClientAliveInterval 15
+ClientAliveCountMax 3
+
+Installation of MPI
+apt-get install openmpi-common
+apt-get install openmpi-bin
+sudo apt-get install libopenmpi-dev
+cp mpihosts into /etc
+
+Get pypar from google code: http://code.google.com/p/pypar/
+sudo python setup.py install
+
+sudo apt-get install dos2unix
+
+GMT 4.5.7 installed (incl netcdf 3.6.3)
+
+apt-get install python-scientific
+
+
+
+
+PRE 11.04 VERSION:
+
+nfs mount of NAS
+
+9/4/2010 (Head node only) - rebooted head => OK
+
+# NAS STATUS
+28 October 2010: Same as 7th September. Rebooted and OK.
+7 September 2010: Headnode had df hang, mount reported OK. Offending filesystem was /model_area. Rebooted head node, OK again. Do not understand why this still happens occasionally.
+18 August 2010: NAS has worked without issue.
+12 July 2010: Head node was booted in the afternoon due to NX black screen. Not known if NAS handles were live.
+6 July 2010: Lost contact again. Rebooted and disconnected one of the SAN switches
+3 July 2010: Lost contact to NAS and rebooted.
+many times since then
+29/4/2010: Head node lost contact to NAS - rebooted head node on 2 May. NAS 1,2,4 OK AGAIN BUT NAS 3 STILL READ ONLY
+26/4/2010: Nas 3 - mounted read-only. Other partitions fine.
+9/4/2010 (head node only). Rebooted head => NAS OK
+16/3/2010 (Nas 4)
+15/3/2010 (Nas 4)
+6/3/2010 (Nas 4)
+26/2/2010
+19/2/2010
+18/1/2010
+
+Reboot worked in case of 18 Jan and 26 Feb.
+In case of 19 Feb, NAS came back as read-only for /model_area (NAS 3)
+
+Nas /model_area (NAS 3) turned read-only on 1 March in the afternoon.
+The other partitions were OK. Could not perform fix below because partition was busy.
+
+# If NAS disappears or is read read-only. Reboot node and do
+this on the NAS:
+
+ssh root@192.168.20.10
+Exactly this was done on NAS server :
+1. Force umount on partition #3 ( umount -f  /nas-data-3 )
+2. Mount partition #3 (mount nas_partition_#3 /nas-data-3)
+
+
+For busy filesystems see http://bugs.gentoo.org/128590
+fuser -m /model_area
+lsof /model_area
+or
+lsof | grep /model_area
+
+# This is what happened when the NAS3 was remounted Monday night 24th May
+# BAD BAD BAD
+
+bash       5806     dhutre  cwd       DIR               0,24    12288  780632065 /data_area/model_area_temporary/sandpits/dhutre/python_eqrm/eqrm_code (192.168.20.10:/nas-data-4/data)
+bash       7131    griffij  cwd       DIR               0,24     4096  844857446 /data_area/model_area_temporary/sandpits/griffij/system_administration/revision_control (192.168.20.10:/nas-data-4/data)
+python     8206    griffij  cwd       DIR               0,24     4096  844857446 /data_area/model_area_temporary/sandpits/griffij/system_administration/revision_control (192.168.20.10:/nas-data-4/data)
+sh         8251    griffij  cwd       DIR               0,24     4096  844857446 /data_area/model_area_temporary/sandpits/griffij/system_administration/revision_control (192.168.20.10:/nas-data-4/data)
+less       8252    griffij  cwd       DIR               0,24     4096  844857446 /data_area/model_area_temporary/sandpits/griffij/system_administration/revision_control (192.168.20.10:/nas-data-4/data)
+bash       8264     dhutre  cwd       DIR               0,24     4096  845758470 /data_area/model_area_temporary/sandpits/griffij/eqrm/my_tools (192.168.20.10:/nas-data-4/data)
+soffice.b 11925     bearad   38u      REG               0,31   135924   43483195 /data_area/model_area_temporary/sandpits/bearad/aim/documentation/AIM User Manual.odt (192.168.20.10:/nas-data-3/data)
+bash      14369    griffij  cwd       DIR               0,24     4096  845873156 /data_area/model_area_temporary/sandpits/griffij/seismologi_teknik (192.168.20.10:/nas-data-4/data)
+
+# ls -la /etc
+-rw-------  1 root root     1594 2010-05-12 10:17 group-
+-rw-r-----  1 root shadow   1223 2010-05-12 10:17 gshadow
+-rw-r--r--  1 root root     1601 2010-05-12 10:17 group
+-rw-r--r--  1 root root      325 2010-05-12 17:04 blkid.tab
+drwxr-xr-x  4 root lp       4096 2010-05-18 07:18 cups
+drwxr-xr-x  7 root root     4096 2010-05-18 17:35 apache2
+-rw-r-----  1 root shadow   4160 2010-05-21 14:07 shadow
+-rw-r--r--  1 root root     1014 2010-05-24 23:16 fstab
+-rw-r--r--  1 root root     2370 2010-05-26 09:12 crontab
+-rw-r--r--  1 root root     1891 2010-05-26 10:48 mtab
+
+# More fstab
+192.168.20.10:/nas-data-1/data /scratch_area nfs defaults 1 1
+192.168.20.10:/nas-data-4/data /data_area nfs defaults 1 1
+192.168.20.10:/nas-data-2/data /snapshot_area nfs defaults 1 1
+192.168.20.10:/nas-data-3/data /model_area nfs defaults 1 1
+
+# df -kh
+192.168.20.10:/nas-data-1/data
+                      2.3T   81G  2.1T   4% /scratch_area
+192.168.20.10:/nas-data-4/data
+                      6.8T  1.4T  5.0T  22% /data_area
+192.168.20.10:/nas-data-2/data
+                      2.0T  1.3T  554G  71% /snapshot_area
+192.168.20.10:/nas-data-3/data
+                      7.7T  998G  6.4T  14% /data_area/model_area_temporary
+
+
+# mount
+192.168.20.10:/nas-data-1/data on /scratch_area type nfs (rw,addr=192.168.20.10)
+192.168.20.10:/nas-data-4/data on /data_area type nfs (rw,addr=192.168.20.10)
+192.168.20.10:/nas-data-2/data on /snapshot_area type nfs (rw,addr=192.168.20.10)
+192.168.20.10:/nas-data-3/data on /data_area/model_area_temporary type nfs (rw,addr=192.168.20.10)
+
+
+
+
+
+
+
+
+Create users graydu, cummip
+
+apt-get install gfortran (Phil Cummins, Fall3D)
+apt-get install csh (Fall3D)
+apt-get install gmt
+apt-get freenx-server (Need addition to sources.list)
+
+gdal-bin
+
+QGIS:
+deb http://ppa.launchpad.net/ubuntugis/ubuntugis-unstable/ubuntu jaunty main
+deb-src http://ppa.launchpad.net/ubuntugis/ubuntugis-unstable/ubuntu jaunty main
+# Authenticate
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys xxxxxxxxx
+
+apt-get install ganglia-monitor, gmetad
+http://debianclusters.cs.uni.edu/index.php/Ganglia:_Installation
+http://debianclusters.cs.uni.edu/index.php/Ganglia:_Node_Configuration
+http://term.ie/devdev/howto_ganglia
+
+# Perhaps maintain a list of base packages
+
+
+
+# All MAC addresses for node1 and node3 (Nirwan 5 Nov 2009)
+Sorry for some lack of information.  Below are the port connection information:
+
+Node #1
+
+Port 1:  00:26:55:83:AA:58    (PXE)
+Port2:   00:26:55:83:AA:5C    (NAS Storage)
+Port3:   00:24:81:AF:83:30    (Alamba)
+Port4:   00:24:81:AF:83:32    (NAS Storage)
+
+
+Node #3
+
+Port 1:  00:26:55:84:DA:78    (PXE)
+Port2:   00:26:55:84:DA:7C    (NAS Storage)
+Port3:   00:24:81:AF:E3:00    (Alamba)
+Port4:   00:24:81:AF:E3:02    (NAS Storage)
+
+
+We would start putting in the Memory later today.
+
+
+# Making shared group primary: Ex
+usermod --groups aifdr,vanpuk vanpuk
+
+
+#
+Observed issue with gmt: grdinfo Bali.grd returned error when done on the NAS.
+Moving it to a local drive worked. See http://osdir.com/ml/gis.gmt.user/2003-06/msg00120.html
+
+You can disable this behaviour with the --disable-flock configure
+switch.
+
+Alternatively, running rpc.lockd on the NFS server(s) might fix the
+problem.
+
+
+# Add swap file to total swap
+# https://help.ubuntu.com/community/SwapFaq
+# http://www.linux.com/news/software/applications/8208-all-about-linux-swap-space
+
+# Example ads 1GB to swap
+dd if=/dev/zero of=/swapfile bs=1024 count=1048576
+mkswap /swapfile
+swapon /swapfile
+
+swapon -s
+Filename			Type		Size	Used	Priority
+/dev/sda2                               partition	3903784	0	-1
+/swapfile                               file			1048568	0	-2
+
+Add to /etc/fstab
+/swapfile       none    swap    sw      0       0

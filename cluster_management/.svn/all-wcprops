@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/system_administration/!svn/ver/327/cluster_management
+END
+install_ganglia.py
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/system_administration/!svn/ver/109/cluster_management/install_ganglia.py
+END
+actions_to_automate.txt
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/system_administration/!svn/ver/254/cluster_management/actions_to_automate.txt
+END
+initialise_server_network.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/system_administration/!svn/ver/12/cluster_management/initialise_server_network.py
+END
+test_results.odt
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/system_administration/!svn/ver/189/cluster_management/test_results.odt
+END
+build_cluster.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/system_administration/!svn/ver/12/cluster_management/build_cluster.py
+END
+node_activity.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/system_administration/!svn/ver/325/cluster_management/node_activity.py
+END
+create_user.py
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/system_administration/!svn/ver/188/cluster_management/create_user.py
+END
+configure_clients.py
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/system_administration/!svn/ver/314/cluster_management/configure_clients.py
+END
+config.py
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/system_administration/!svn/ver/327/cluster_management/config.py
+END
+configure_server.py
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/system_administration/!svn/ver/314/cluster_management/configure_server.py
+END
+reboot_clients.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/system_administration/!svn/ver/64/cluster_management/reboot_clients.py
+END
+utilities.py
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/system_administration/!svn/ver/285/cluster_management/utilities.py
+END
+ethernet_mappings.py
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/system_administration/!svn/ver/276/cluster_management/ethernet_mappings.py
+END
+install_initial_packages.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/system_administration/!svn/ver/217/cluster_management/install_initial_packages.py
+END
+mpihosts
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/system_administration/!svn/ver/247/cluster_management/mpihosts
+END
+cluster_test.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/system_administration/!svn/ver/316/cluster_management/cluster_test.py
+END
+build_clients.py
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/system_administration/!svn/ver/216/cluster_management/build_clients.py
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/system_administration/!svn/ver/241/cluster_management/README.txt
+END
+synchronise_clients.py
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/system_administration/!svn/ver/244/cluster_management/synchronise_clients.py
+END
+rsync_headnode.py
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/system_administration/!svn/ver/194/cluster_management/rsync_headnode.py
+END
+restart_services.py
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/system_administration/!svn/ver/217/cluster_management/restart_services.py
+END

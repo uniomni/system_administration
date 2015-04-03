@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/system_administration/!svn/ver/328/revision_control
+END
+create_project.py
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/system_administration/!svn/ver/146/revision_control/create_project.py
+END
+backup_project.py
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/system_administration/!svn/ver/90/revision_control/backup_project.py
+END
+remove_user.py
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/system_administration/!svn/ver/119/revision_control/remove_user.py
+END
+utilities.py
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/system_administration/!svn/ver/115/revision_control/utilities.py
+END
+install_trac_and_subversion.py
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/system_administration/!svn/ver/33/revision_control/install_trac_and_subversion.py
+END
+load_all_projects.py
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/system_administration/!svn/ver/328/revision_control/load_all_projects.py
+END
+create_user.py
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/system_administration/!svn/ver/119/revision_control/create_user.py
+END
+remove_project.py
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/system_administration/!svn/ver/35/revision_control/remove_project.py
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/system_administration/!svn/ver/41/revision_control/README.txt
+END
+config.py
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/system_administration/!svn/ver/85/revision_control/config.py
+END
+load_project.py
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/system_administration/!svn/ver/148/revision_control/load_project.py
+END
+links.txt
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/system_administration/!svn/ver/82/revision_control/links.txt
+END

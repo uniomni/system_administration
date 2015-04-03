@@ -1,0 +1,33 @@
+\chapter{introduction}
+
+
+\section{General system configuration}
+
+\subsection{Keep ssh connection alive}
+
+
+From \url{http://www.webmasterworld.com/linux/3078346.htm}
+
+Either on server side, add to texttt{/etc/ssh/sshd\_config} 
+\begin{verbatim} 
+ClientAliveInterval 15
+ClientAliveCountMax 5 
+\end{verbatim} 
+or on the client side, add to \texttt{.ssh/config}
+\begin{verbatim} 
+ServerAliveInterval 15
+\end{verbatim} 
+
+
+\section{Security}
+
+Ubuntu does not have an explicit root admin account, rather
+admin is based on sudo which can be executed by those users belonging to
+the admin group.
+Nonetheless, we disable external root login on principle in the file 
+texttt{/etc/ssh/sshd\_config} 
+\begin{verbatim} 
+PermitRootLogin no
+\end{verbatim}
+
+

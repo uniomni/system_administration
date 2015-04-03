@@ -1,0 +1,27 @@
+\chapter{TRAC}
+        
+The capability to track emerging issues as they get resolved and link
+this process to the revision control system is accomplished through the use
+of an bug or issue tracker such as TRAC.
+        
+Links to TRAC tutorials used:
+\begin{itemize} 
+  \item \url{https://help.ubuntu.com/community/UbuntuTracHowto}
+  \item \url{https://help.ubuntu.com/community/Trac}
+  \item \url{http://trac.edgewall.org/wiki/TracModPython}
+\end{itemize} 
+
+
+apt-get install libapache2-mod-python libapache2-mod-python-doc
+
+
+trac-admin <src> initenv
+
+#Need to check ANU configuration of httpd.conf
+
+# Create cgi deployment
+# See http://calibre.kovidgoyal.net/wiki/TracUpgrade
+trac-admin index deploy /usr/share/trac
+
+
+Permissions like with svn

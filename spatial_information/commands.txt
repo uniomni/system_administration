@@ -1,0 +1,103 @@
+# Basic PostGIS Commands
+	
+	
+As user postgres	
+psql -d <database>
+
+# Diagnostics
+SELECT version();
+SELECT postgis_lib_version();
+SELECT postgis_full_version();
+
+# Show all databases
+select datname from pg_database;
+
+# Show all tables in database
+\d
+SELECT table_name from information_schema.tables WHERE table_type = 'BASE TABLE' and table_schema NOT IN ('pg_catalog', 'information_schema');
+
+# Show all column names in database 'wa'
+select column_name from information_schema.columns WHERE table_name = 'wa';
+select column_name, data_type from information_schema.columns WHERE table_name = 'wa2';
+
+# Geometry tables
+select * from geometry_columns;
+select * from spatial_ref_sys;
+
+
+# Create table
+CREATE TABLE wa_trunc
+(gid integer, code char(50), jncode char(50), narrative char(250), the_geom geometry);
+
+# Insert into table
+gis_database=# INSERT INTO wa_trunc (gid, code, jncode, narrative, the_geom)
+gis_database-# select gid, code, jncode, narrative, the_geom
+gis_database-# from wa2;
+
+#- realised one really should probably use AddGeometryColumn (but this didn' work):
+#alter table wa_trunc drop column the_geom;
+#SELECT AddGeometryColumn('wa_trunc', 'the_geom', -1, 'MULTIPOLYGON', 2);
+#                     addgeometrycolumn     
+
+# EWKT example (HEX)
+select 'srid=4;point(0 0)'::geometry
+
+# Find Spatial Reference ID (SRID)
+select srid, srtext, proj4text from spatial_ref_sys where srtext LIKE '%WGS84%';
+
+select srid, srtext, proj4text from spatial_ref_sys where
+srtext LIKE '%WGS%' and not srtext LIKE '%TOWGS%';
+
+select srid, srtext, proj4text from spatial_ref_sys where
+srtext LIKE '%GDA94%' and not srtext LIKE '%zone%';
+
+# Count records in table
+select count(*) from table;
+
+
+# Users, groups (roles) and ownership
+CREATE ROLE gisgroup NOSUPERUSER NOINHERIT CREATEDB NOCREATEROLE;
+CREATE ROLE gis LOGIN PASSWORD 'oialc' NOINHERIT;
+GRANT gisgroup TO gis;
+
+ALTER TABLE geometry_columns OWNER TO gis;
+ALTER TABLE spatial_ref_sys OWNER TO gis;
+CREATE SCHEMA gis_schema AUTHORIZATION gis;
+
+# 
+python load_shapefiles.py /home/ole/GIS_tests/Rockingham_Busselton_Data gis_database
+
+
+# Settings
+
+psql -d abc
+\set
+AUTOCOMMIT = 'on'
+PROMPT1 = '%/%R%# '
+PROMPT2 = '%/%R%# '
+PROMPT3 = '>> '
+VERBOSITY = 'default'
+VERSION = 'PostgreSQL 8.4.1 on i486-pc-linux-gnu, compiled by GCC gcc-4.4.real (Ubuntu 4.4.1-3ubuntu3) 4.4.1, 32-bit'
+DBNAME = 'abc'
+USER = 'postgres'
+HOST = '/tmp'
+PORT = '5432'
+ENCODING = 'UTF8'
+
+
+
+
+# PGPASSWORD
+From http://www.postgresql.org/docs/8.1/interactive/libpq-pgpass.html
+
+28.12. The Password File
+
+The file .pgpass in a user's home directory or the file referenced by PGPASSFILE can contain passwords to be used if the connection requires a password (and no password has been specified otherwise). On Microsoft Windows the file is named %APPDATA%\postgresql\pgpass.conf (where %APPDATA% refers to the Application Data subdirectory in the user's profile).
+
+This file should contain lines of the following format:
+
+hostname:port:database:username:password
+
+Each of the first four fields may be a literal value, or *, which matches anything. The password field from the first line that matches the current connection parameters will be used. (Therefore, put more-specific entries first when you are using wildcards.) If an entry needs to contain : or \, escape this character with \. A hostname of localhost matches both host (TCP) and local (Unix domain socket) connections coming from the local machine.
+
+The permissions on .pgpass must disallow any access to world or group; achieve this by the command chmod 0600 ~/.pgpass. If the permissions are less strict than this, the file will be ignored. (The file permissions are not currently checked on Microsoft Windows, however.)
