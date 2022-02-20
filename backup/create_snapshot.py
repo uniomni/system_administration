@@ -77,12 +77,12 @@ import sys, time, os, string, getopt
 
 
 def usage():
-    print 'Usage:'
-    print 'python create_snapshot.py [options] <dir1> <dir2> ...'
-    print 'Options:'
-    print '  -h, --help: Show usage string'
-    print '  -d, --destination: Nominate destination directory for snapshots'
-    print '  -m, --mode: sync (default), tag, weed, save or stat.' 
+    print('Usage:')
+    print('python create_snapshot.py [options] <dir1> <dir2> ...')
+    print('Options:')
+    print('  -h, --help: Show usage string')
+    print('  -d, --destination: Nominate destination directory for snapshots')
+    print('  -m, --mode: sync (default), tag, weed, save or stat.')
   
     
 #------------------------------------
@@ -122,7 +122,7 @@ def makedir(newdir):
         raise OSError(msg)
     else:
         head, tail = os.path.split(newdir)
-        if head and not os.path.isdir(head):
+        if head and not (os.path.isdir(head) or os.path.islink(head)):
             makedir(head)
         if tail:
             os.mkdir(newdir)
@@ -168,13 +168,13 @@ def snapshot(destination, mode, snapshot_dirs):
                   % (time_stamp, backup_time)
             s += 'Please wait till previous snapshot has completed.\n'
             s += 'If this is wrong, please delete %s and try again.' % lockfile 
-            raise Exception, s
+            raise Exception(s)
         else:
             pass
           
       
         # Make lock
-        if verbose > 0: print 'Making lock file %s' % lockfile
+        if verbose > 0: print('Making lock file %s' % lockfile)
         fid = open(lockfile, 'w')
         fid.write(mode + ':' + time_stamp + '\n')
         fid.close()
@@ -223,15 +223,15 @@ def snapshot(destination, mode, snapshot_dirs):
                     most_recent_hardlink)      
             
             if verbose > 0:
-                print cmd
+                print(cmd)
 
             if not dryrun:
                 exitcode = os.system(cmd)
                 if exitcode != 0 and verbose > 0:
-                    print '\nWARNING (snapshot): Problems copying directory %s to %s'\
-                        % (dir, most_recent_hardlink)
-                    print '                  This can for example happen if user'
-                    print '                  is not allowed to read all of %s or if it does not exist' % dir
+                    print('\nWARNING (snapshot): Problems copying directory %s to %s'\
+                          % (dir, most_recent_hardlink))
+                    print ('                  This can for example happen if user')
+                    print ('                  is not allowed to read all of %s or if it does not exist' % dir)
         
         # Update time stamp on newly created snapshot
         cmd = 'touch %s' % most_recent_hardlink
@@ -239,10 +239,10 @@ def snapshot(destination, mode, snapshot_dirs):
         
         # Make snapshot read only
         cmd = 'chmod -R a-w %s' % most_recent_hardlink
-        print cmd
+        print(cmd)
         exitcode = os.system(cmd)        
         
-        if verbose > 0: print 'rsync completed in %d seconds' % (time.time() - t_start)
+        if verbose > 0: print('rsync completed in %d seconds' % (time.time() - t_start))
 
 
     # Tag
@@ -254,13 +254,13 @@ def snapshot(destination, mode, snapshot_dirs):
         cmd = '%s' % copycmd
 
         if verbose > 0:
-            print cmd   
+            print(cmd)
      
         exitcode = os.system(cmd)
        
        
-        if verbose > 0: print 'hardlink rotation completed in %d seconds'\
-                              % (time.time() - t_snap)
+        if verbose > 0: print('hardlink rotation completed in %d seconds'\
+                              % (time.time() - t_snap))
 
 
 
@@ -294,7 +294,7 @@ def snapshot(destination, mode, snapshot_dirs):
                    try:
                        time_tuple = time.strptime(stamp, '%Y-%m-%dT%H-%M-%S')
                    except:
-                       print 'Warning:' + stamp + ' could not be parsed'
+                       print('Warning:' + stamp + ' could not be parsed')
                        continue
        
                    # Organise files in the various time slots
@@ -306,7 +306,8 @@ def snapshot(destination, mode, snapshot_dirs):
                        if timeslot[i] < current_timeslot[i] - delay[i]:
                            # File is older than current time slot - delay,
                            # put it into appropriate slot.
-                           if not timedict[i].has_key(timeslot[i]):
+                           #if not timedict[i].has_key(timeslot[i]):
+                           if timeslot[i] not in timedict[i]:
                                timedict[i][timeslot[i]] = {}
                            timedict[i][timeslot[i]][filename] = time.mktime(time_tuple)
                            processed = 1             
@@ -324,16 +325,16 @@ def snapshot(destination, mode, snapshot_dirs):
                    # Sort
                    V = flist.values()
                    F = flist.keys()
-                   A = zip(V,F)
+                   A = list(zip(V, F))
                    A.sort()
                    keepfile = A[-1][1]
-                   tobe_deleted = map(lambda x: x[1], A[:-1])
+                   tobe_deleted = list(map(lambda x: x[1], A[:-1]))
                  
-                   print 'Expired time slot (%s)' %timeslot_names[i]
+                   print('Expired time slot (%s)' %timeslot_names[i])
                    if len(tobe_deleted) > 0:
-                       print '  Delete: ', tobe_deleted
-                   print '  Keep:   ', keepfile
-                   print
+                       print('  Delete: ', tobe_deleted)
+                   print('  Keep:   ', keepfile)
+                   print()
                    keeplist.append(keepfile)
 
                    delete_files += tobe_deleted # Accumulate
@@ -341,25 +342,24 @@ def snapshot(destination, mode, snapshot_dirs):
            i += 1
        
 
-       print 'To be deleted:'
-       print delete_files
-       print
-       print 'To be kept:'
-       print keeplist
-       print
+       print('To be deleted:')
+       print(delete_files)
+       print()
+       print('To be kept:')
+       print(keeplist)
+       print()
        
        
        # Delete superfluous files
        if len(delete_files) > 0:
-           delete_string = string.join(delete_files)
+           delete_string = ' '.join(delete_files)
            cmd = 'cd %s; /bin/rm -rf %s' % (destination, delete_string)
 
-           if verbose > 0: print cmd
+           if verbose > 0: print(cmd)
            if not dryrun: os.system(cmd)
        
-       
-           if verbose > 0: print 'superfluous files deleted in %d seconds'\
-              %(time.time() - t_weed)
+           if verbose > 0: print('superfluous files deleted in %d seconds'\
+              %(time.time() - t_weed))
 
 
 
@@ -378,14 +378,14 @@ def snapshot(destination, mode, snapshot_dirs):
        files = fid.readlines()
        fid.close()
        
-       print 'You currently have %d backups' %(len(files))
+       print('You currently have %d backups' %(len(files)))
 
 
-       cmd = '%s > %s' % ('du -sh %s/latest_snapshot' % destination, tmpfile)
-       if verbose: print cmd
+       cmd = '%s > %s' % ('du -sDh %s/latest_snapshot' % destination, tmpfile)
+       if verbose: print(cmd)
        exitcode = os.system(cmd)
-       cmd = '%s >> %s' %('du -sh %s' % destination, tmpfile)
-       if verbose: print cmd   
+       cmd = '%s >> %s' %('du -sDh %s' % destination, tmpfile)
+       if verbose: print(cmd)   
        exitcode = os.system(cmd)
 
 
@@ -398,12 +398,12 @@ def snapshot(destination, mode, snapshot_dirs):
            size1 = lines[0].strip().split()[0]
            size2 = lines[1].strip().split()[0]     
          
-           print 'Size of latest backup: %s bytes' % size1
-           print 'Size of all backups:   %s bytes' % size2      
+           print('Size of latest backup: %s bytes' % size1)
+           print('Size of all backups:   %s bytes' % size2)      
 
 
-       if verbose > 0: print 'Statistics obtained in %d seconds'\
-             %(time.time() - t_stats)
+       if verbose > 0: print('Statistics obtained in %d seconds'\
+             %(time.time() - t_stats))
 
 
 
@@ -413,7 +413,7 @@ def snapshot(destination, mode, snapshot_dirs):
                     %(mode, time.time()-t_start,time.asctime()))
         fid.close()
     except:
-        print 'WARNING: Could not open log file %s. Do you have write permissions?' % logfile
+        print('WARNING: Could not open log file %s. Do you have write permissions?' % logfile)
       
 
     if mode in ['sync', 'tag']:
@@ -434,7 +434,7 @@ def save_snapshot(destination, snapshot_name, tag):
         copycmd = 'mkdir %s; cd %s && find . -print | cpio -dpl %s'\
             % (target, snapshot, target)
     
-    print copycmd
+    print(copycmd)
     os.system(copycmd)
       
       
@@ -442,9 +442,9 @@ if __name__ == '__main__':
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'hd:m:', ['help', 'destination=', 'mode='])
-    except getopt.GetoptError, err:
+    except getopt.GetoptError(err):
         # print help information and exit:
-        print str(err)
+        print(str(err))
         usage()
         sys.exit() 
         

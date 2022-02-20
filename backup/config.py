@@ -6,7 +6,8 @@ allowed_modes = ['sync', 'tag', 'weed', 'stat', 'save']
 
 # General exclude patterns. See man rsync for details on usage.
 exclude_list = ['*~', '.*~', '#*#', '.#*', '*.o', '*.so']
-exclude_list += ['.mozilla', '.Trash', '.gvfs', '.gconf', '.gconfd']
+exclude_list += ['.mozilla', '.Trash', '.gvfs', '.gconf', '.gconfd', '.cache']
+exclude_list += ['/run']
 
 # Exclude everything in /var except log and spool/mail
 #exclude_list += ['/var/*', '/var/spool/*', 'cache']
