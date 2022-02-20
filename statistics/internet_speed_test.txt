@@ -1,0 +1,11 @@
+# Notes regarding scripted regular test of connectivity and speed
+# See also internet_downtime.py
+
+#Source
+#https://www.npmjs.com/package/speedtest-net
+
+npm install --save speedtest-net
+
+$ npm install --global speedtest-net
+$ speedtest-net
+
