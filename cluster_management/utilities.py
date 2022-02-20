@@ -4,7 +4,7 @@
 import os, string
 
 class NICinfo:
-    """Represent one network card (NIC) in terms of
+    """Represent one network card (NIC) in terms of 
     mac address and ip address
     """
     def __init__(self, mac, ip):
@@ -18,8 +18,8 @@ class NICinfo:
         return s
 
 class Nodeinfo:
-    """Represent two network cards (NICs):
-    One for the PXE boot and one for the subsequent
+    """Represent two network cards (NICs): 
+    One for the PXE boot and one for the subsequent 
     network communication
     """
     def __init__(self, pxe, net, nas):
@@ -28,9 +28,9 @@ class Nodeinfo:
         self.nas = nas
 
     def __repr__(self):
-        s = '\n    PXE: %s\n' % self.pxe
+        s = '\n    PXE: %s\n' % self.pxe 
         s += '    NET: %s\n' % self.net
-        s += '    NAS: %s\n' % self.nas
+        s += '    NAS: %s\n' % self.nas 
         return s
 
 def get_class_c_addr(ip):
@@ -48,7 +48,7 @@ def reverse_addr(ip):
 
 def add2addr(ip, i):
     """Add i to rightmost field of ip address
-
+    
     If result exceeds 255 an exception is raised
     """
 
@@ -67,7 +67,7 @@ def get_kernel_name():
     Looking for something like vmlinuz-2.6.28-11-generic
     This approach will take the first match as the kernel name
     """
-
+    
     #print 'Searching for kernel in /boot'
     kernel_name = None
     for file in os.listdir('/boot'):

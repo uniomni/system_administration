@@ -202,7 +202,6 @@ iface lo inet loopback
 
 # NOTE: Ethernet cards are hardwired for the alamba cluster
 for (interface, ip) in [('eth1', head_ip),
-                        ('eth2', head_storage_ip),
                         ('eth4', head_internet_ip),
                         ('eth5', head_management_ip)]:
     gateway = get_class_c_addr(ip) + '.1'
@@ -224,14 +223,14 @@ for (interface, ip) in [('eth1', head_ip),
 #    fid.write('auto %s\n' % eth)
 #    fid.write('iface %s inet manual\n\n' % eth)
 
-#fid.write('auto bond0\n')
-#fid.write('iface bond0 inet static\n')
-#fid.write('        address %s\n' % head_storage_ip)
-#fid.write('        netmask %s\n' % netmask)
-#fid.write('        bond-slaves eth2 eth3\n')
-##fid.write('        up /sbin/ifenslave bond0 eth2 eth3\n')
-##fid.write('        pre-down /sbin/ifenslave -d bond0 eth2 eth3\n')
-#fid.close()
+fid.write('auto bond0\n')
+fid.write('iface bond0 inet static\n')
+fid.write('        address %s\n' % head_storage_ip)
+fid.write('        netmask %s\n' % netmask)
+fid.write('        bond-slaves eth2 eth3\n')
+#fid.write('        up /sbin/ifenslave bond0 eth2 eth3\n')
+#fid.write('        pre-down /sbin/ifenslave -d bond0 eth2 eth3\n')
+fid.close()
 
 # Allow symbolic node names to be used without full domain.
 os.chdir('/etc')
@@ -280,8 +279,9 @@ UUID=900f93bb-1343-4237-abd2-5e6ec1fb90d5 none            swap    sw            
 # Now add NFS mount of the NAS - note use version 3 for the NAS, other nobody, nogroup is mapped
 for nas_dir in nas_filesystems:
     nas_mount_point = nas_filesystems[nas_dir]
-    fid.write('%s /%s nfs defaults,intr,nfsvers=3 1 1\n' % (nas_dir,
-                                                            nas_mount_point))
+    fid.write('%s:%s /%s nfs defaults,intr,nfsvers=3 1 1\n' % (nas_ip,
+                                                               nas_dir,
+                                                               nas_mount_point))
 fid.close()
 
 # Create mount points for NAS filesystems at the root level

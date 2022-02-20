@@ -121,8 +121,9 @@ for hostname in nodes_to_build:
                                                    shared_dir))
     for nas_dir in nas_filesystems:
         nas_mount_point = nas_filesystems[nas_dir]
-        fid.write('%s /%s nfs defaults,nfsvers=3 1 1\n' % (nas_dir,
-                                                           nas_mount_point))
+        fid.write('%s:%s /%s nfs defaults,nfsvers=3 1 1\n' % (nas_ip,
+                                                              nas_dir,
+                                                              nas_mount_point))
     fid.close()
 
 
@@ -138,7 +139,8 @@ for hostname in nodes_to_build:
     fid.write('127.0.1.1        %s\n' % hostname)
     fid.close()
 
-    # Create persistent names for network interfaces (I don't believe this works - the static allocation in /etc/network/interfaces is the way to go, so I am sure this bit could be deleted. No harm though.)
+
+    # Create persistent names for network interfaces.
     os.chdir(os.path.join(client_image_dir, hostname, 'etc/udev/rules.d'))
     fid = open('70-persistent-net.rules', 'w')
     interfaces = mac_addr[hostname]
@@ -149,11 +151,9 @@ for hostname in nodes_to_build:
         fid.write('# Ethernet device %s\n' % eth)
         fid.write('SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="%s", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="eth*", NAME="%s"\n\n' % (macaddr_with_colons, eth))
 
-    # FIXME: Temp cleanup
-    #os.system('/bin/rm -rf %s/%s/etc/udev/rules.d/70-persistent-net.rules' % (client_image_dir, hostname))
 
 
-    # Create modprobe aliases for network bonding (FIXME: All the bonding stuff could be deleted)
+    # Create modprobe aliases for network bonding
     os.chdir(os.path.join(client_image_dir, hostname, 'etc/modprobe.d'))
     fid = open('aliases.conf', 'w')
     fid.write('alias bond0 bonding\n')
@@ -163,20 +163,13 @@ for hostname in nodes_to_build:
     # Create network interfaces file (with static address)
     os.chdir(os.path.join(client_image_dir, hostname, 'etc/network'))
     fid = open('interfaces', 'w')
-    #fid.write('auto lo %s %s %s %s\n' % tuple(interface_names))
-    fid.write('auto lo\n')
+    fid.write('auto lo %s %s %s %s\n' % tuple(interface_names))
     fid.write('iface lo inet loopback\n\n')
 
-    fid.write('auto eth0\n')
     fid.write('iface eth0 inet static\n')
     fid.write('        address %s\n' % nodes[hostname].pxe.ip)
     fid.write('        netmask %s\n' % netmask)
     fid.write('        gateway 192.168.11.1\n\n')  # FIXME Derive
-
-    fid.write('auto eth1\n')
-    fid.write('iface eth1 inet static\n')
-    fid.write('        address %s\n' % nodes[hostname].nas.ip)
-    fid.write('        netmask %s\n' % netmask)
 
 
     # Bonding section of interfaces (storage net)
@@ -184,12 +177,12 @@ for hostname in nodes_to_build:
     #for eth in ['eth5', 'eth6']:
     #    fid.write('iface %s inet dhcp\n\n' % eth)
 
-    #fid.write('auto bond0\n')
-    #fid.write('iface bond0 inet static\n')
-    #fid.write('        address %s\n' % nodes[hostname].nas.ip)
-    #fid.write('        netmask %s\n' % netmask)
-    #fid.write('        post-up /sbin/ifenslave bond0 eth7 eth8\n')
-    #fid.close()
+    fid.write('auto bond0\n')
+    fid.write('iface bond0 inet static\n')
+    fid.write('        address %s\n' % nodes[hostname].nas.ip)
+    fid.write('        netmask %s\n' % netmask)
+    fid.write('        post-up /sbin/ifenslave bond0 eth7 eth8\n')
+    fid.close()
 
     # Set DNS server to head node in all compute nodes
     os.chdir(os.path.join(client_image_dir, hostname, 'etc'))

@@ -18,9 +18,7 @@ head_management_ip = '192.168.2.59'
 head_hostname = 'alamba'
 external_nameserver = '203.77.225.2'
 web_ip = '203.77.224.67'
-#nas_ip = '192.168.20.12'  # NAS 1 (HP) - Disabled 10 Jan 2013 because nodes 13, 15, 18 couldn't connect. Network cable issue.
-nas_ip = '192.168.40.14'  # NAS 1 (using office network)
-synology_ip = '192.168.40.105'  # NAS 2 (Synology)
+nas_ip = '192.168.20.12'
 nfs_permissions = 'rw,no_root_squash,async,no_subtree_check' # For exports on server
 netmask = '255.255.255.0'
 domain_name = 'aifdr.org'
@@ -28,13 +26,10 @@ number_of_nodes = 20 # Nodes will be named as node1, node2, ...
 
 # Filesystems to be used for NFS mount of the NAS
 # DO NOT PUT PRECEDING / IN FRONT OF MOUNT POINTS
-nas_filesystems = {'%s:/nas1/data' % nas_ip: 'scratch_area',
-                   '%s:/nas2/data' % nas_ip: 'snapshot_area',
-                   '%s:/nas3/data' % nas_ip: 'model_area',
-                   '%s:/nas4/data' % nas_ip: 'data_area',
-                   '%s:/volume1/NOVA_VMS' % synology_ip: 'NOVA_VMS',
-                   '%s:/volume2/OPENSTACK' % synology_ip: 'OPENSTACK',
-                   '%s:/volume3/TsuDAT' % synology_ip: 'TsuDAT'}
+nas_filesystems = {'/nas1/data': 'scratch_area',
+                   '/nas2/data': 'snapshot_area',
+                   '/nas3/data': 'model_area',
+                   '/nas4/data': 'data_area'}
 
 # List nodes that will be built from the base system.
 # Irrespective of this list, all nodes listed in nodes dictionary
@@ -50,7 +45,7 @@ nodes_to_build = ['node1',
                   'node6',
                   'node7',
                   'node8',
-                  #'node9',  # Dead as of late 2012
+                  'node9',
                   'node10',
                   'node11',
                   'node12',
@@ -63,13 +58,12 @@ nodes_to_build = ['node1',
                   'node19',
                   'node20']
 
-#nodes_to_build = ['node2']
-
 #nodes_to_build = ['node1', 'node2', 'node3', 'node4', 'node5']
+#nodes_to_build = ['node6'] #, 'node7']
 #nodes_to_build = ['node11', 'node12', 'node13', 'node14', 'node15',
 #                  'node16', 'node17', 'node18', 'node19', 'node20']
 #nodes_to_build = ['node16', 'node17', 'node18', 'node19', 'node20']
-#nodes_to_build = ['node14']
+#nodes_to_build = ['node1', 'node2', 'node3', 'node4']
 
 # Define host names of clients and their associated
 # IP addresses used by PXE at boot time.
@@ -89,7 +83,7 @@ for i in range(number_of_nodes):
 
     nodename = 'node%s' % (i+1)
 
-    NET = NICinfo(mac_addr[nodename]['eth0'],  #FIXME: No longer used
+    NET = NICinfo(mac_addr[nodename]['eth5'],
                   add2addr(first_net_ip, i))
 
     PXE = NICinfo(mac_addr[nodename]['eth0'],
@@ -113,7 +107,4 @@ auto_generate_disclaimer = '''
 \n
 '''
 
-# For use by cluster_test.py and node_activity.py
-logfile = '/var/tmp/cluster_test.log'  # Has to be writable to all
 
-number_of_processors_per_node = 8  # 2 x quadcore cpus
