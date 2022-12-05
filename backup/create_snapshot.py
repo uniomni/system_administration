@@ -70,7 +70,7 @@ as a cron job. E.g
 
 """
 
-from config import include_list, exclude_list, delay, tmpfile_basename, logfile, lockfile
+from config import include_list, exclude_list, delay, tmpfile_basename, logfile, lockfile, monitor_dir, monitor_basename
 from config import use_gnu, latest_snapshot_dir, snapshot_dir, dryrun, verbose, allowed_modes
 import sys, time, os, string, getopt
 
@@ -414,7 +414,23 @@ def snapshot(destination, mode, snapshot_dirs):
         fid.close()
     except:
         print('WARNING: Could not open log file %s. Do you have write permissions?' % logfile)
-      
+
+    # Create monitoring file (e.g. on Desktop) to allow easy verification that backup system is working
+
+    E = time.asctime().split() # E.g. ['Mon', 'Dec', '5', '14:07:06', '2022']
+    timestamp = '%s %s %s %s' % (E[2], E[1], E[3], E[4])  # E.g     
+    monitorfile = os.path.join(monitor_dir, monitor_basename + ': ' + timestamp) 
+
+    # Cleanout previous time stamps
+    os.system('/bin/rm -r %s*' % os.path.join(monitor_dir, monitor_basename))
+
+    try:        
+        fid = open(monitorfile, 'w')
+        fid.write('Finished backup %s in %d seconds at %s\n'\
+               % (mode, time.time()-t_start,time.asctime()))
+        fid.close()        
+    except:
+        print('WARNING: Could not open monitor file %s. Do you have write permissions?' % monitorfile)        
 
     if mode in ['sync', 'tag']:
         # Remove lockfile  

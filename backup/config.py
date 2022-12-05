@@ -21,6 +21,8 @@ delay      = [1,1,0,0,0]
 tmpfile_basename = '/tmp/snapshot_files' # Temporary storage on local host
 logfile = '/var/log/snapshot.log'
 lockfile = '/var/lock/snapshot.lock'
+monitor_dir = '/home/ro/Desktop'   # Location for easy monitoring of latest snapshot
+monitor_basename = 'LB-time'       # Characteristic prefix for monitoring file. Files starting with this will get deleted regularly.
 latest_snapshot_dir = 'latest_snapshot'
 snapshot_dir = 'snapshot' # This will get timestamped
 
