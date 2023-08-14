@@ -422,7 +422,10 @@ def snapshot(destination, mode, snapshot_dirs):
     monitorfile = os.path.join(monitor_dir, monitor_basename + ': ' + timestamp) 
 
     # Cleanout previous time stamps
-    os.system('/bin/rm -r %s*' % os.path.join(monitor_dir, monitor_basename))
+    try:
+        os.system('/bin/rm -r %s*' % os.path.join(monitor_dir, monitor_basename))
+    except:
+        pass  # In case there were none just ignored that error message
 
     try:        
         fid = open(monitorfile, 'w')
