@@ -133,7 +133,7 @@ def snapshot(destination, mode, snapshot_dirs):
     """
 
     t_start = time.time()
-
+    
     # Form destination dir based on current time stamp
     time_tuple = time.localtime(t_start)
     time_stamp = time.strftime('%Y-%m-%dT%H-%M-%S', time_tuple) # ISO 8601 time stamp (except colons)
@@ -152,6 +152,20 @@ def snapshot(destination, mode, snapshot_dirs):
     # Create destination if necessary
     makedir(destination)  
 
+    
+    # Determine if there is enough space in the destination directory (WIP)
+    
+    # Work out the amount of space required (du -s for each directory to be backed up)
+    
+    # Work out the amount of free space in the destination area
+    
+    # df -k destination
+    cmd = 'df -k %s' % destination
+    if verbose > 0:
+        print(cmd)
+
+    os.system(cmd)  # TODO: Get the result    
+    
 
     if mode in ['sync', 'tag']:
         # Check that previous snapshot has finished
