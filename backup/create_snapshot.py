@@ -150,7 +150,7 @@ def snapshot(destination, mode, snapshot_dirs):
                 % (target, most_recent_hardlink, target)
 
     # Create destination if necessary
-    makedir(destination)  
+    # makedir(destination)  # Commented out because sometimes it is created in the wrong area with insufficient space.
 
     
     # Determine if there is enough space in the destination directory (WIP)
